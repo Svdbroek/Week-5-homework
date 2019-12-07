@@ -4,6 +4,16 @@ const parserMiddleware = bodyParser.json();
 const app = express();
 const port = 3000;
 
+let count = 0;
+
+function counterMiddleware(req, res, nxt) {
+  count++;
+  if (count > 5) {
+    res.status(429).send("too many requests");
+  } else nxt();
+}
+
+app.use(counterMiddleware);
 app.use(parserMiddleware);
 
 app.post("/message", (req, res, nxt) => {
