@@ -67,9 +67,11 @@ app.post("/movie", (req, res, nxt) => {
 });
 
 app.get("/movie", (req, res, nxt) => {
-  Movie.findAll()
-    .then(info => res.send(info))
-    .catch(err => nxt(err));
+  const limit = req.query.limit || 25;
+  const offset = req.query.offset || 0;
+  Movie.findAndCountAll({ limit, offset })
+    .then(result => res.send({ Movies: result.rows, total: result.count }))
+    .catch(error => next(error));
 });
 
 app.get("/movie/:id", (req, res, nxt) => {
